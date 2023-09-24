@@ -1,5 +1,6 @@
 package org.Statistic;
 
+import org.Entity.StuScore;
 import org.Exception.StuNotFoundException;
 import org.Strategy.Strategy;
 
@@ -61,6 +62,71 @@ public class stats implements Statistic{
         );
         return res;
     }
+
+    /**
+     * 统计全排名
+     * @param stuScores 学生各学年成绩
+     * @param strategy 计算策略
+     * @return 全排名
+     */
+    @Override
+    public List<StuScore> rank(List<Map<String, Double>> stuScores, Strategy strategy) {
+        List<StuScore> ans = new ArrayList<>();
+        List<String> intersection = intersection(stuScores);
+        intersection.forEach(
+                stu->{
+                    Double[] scores = getStuScores(stu, stuScores);
+                    double avg = strategy.calculateStrategy(scores);
+                    ans.add(
+                            new StuScore(stu,avg,scores)
+                    );
+                }
+        );
+        Collections.sort(ans);
+        return ans;
+    }
+
+    @Override
+    public List<StuScore> majorTrans(List<Map<String, Double>> stuScores, Strategy strategy) {
+        List<String> mTrans = difference(stuScores);
+        stuScores.remove(0);
+        List<StuScore> ans = new ArrayList<>();
+        mTrans.forEach(
+                stu->{
+                    Double[] scores = getStuScores(stu, stuScores);
+                    double avg = strategy.calculateStrategy(scores);
+                    ans.add(
+                            new StuScore(stu,avg,scores)
+                    );
+                }
+        );
+        Collections.sort(ans);
+        return ans;
+    }
+
+    private List<String> difference(List<Map<String,Double>> stuScores){
+        List<String> diff = numKeyToList(stuScores.get(0));
+        for (int i = 1; i < stuScores.size(); i++) {
+            Map<String, Double> termScore = stuScores.get(i);
+            List<String> nums = numKeyToList(termScore);
+            nums.removeAll(diff);
+            diff=nums;
+        }
+        return diff;
+    }
+
+    private List<String> intersection(List<Map<String,Double>> stuScores){
+        List<String> intersection = numKeyToList(stuScores.get(0));
+        stuScores.forEach(
+                termScore->{
+                    //该学年成绩单
+                    List<String> nums = numKeyToList(termScore);
+                    intersection.retainAll(nums); //求交
+                }
+        );
+        return intersection;
+    }
+
 
     private List<String> numKeyToList(Map<String,Double> m){
         return new ArrayList<>(m.keySet());

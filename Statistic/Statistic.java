@@ -17,4 +17,6 @@ public interface Statistic {
     Map leastOneSuperior(List<Map<String,Double>> stuScores,String stuNum);
     Map allSuperior(List<Map<String,Double>> stuScores,String stuNum);
     Map comprehensiveSuperior(List<Map<String,Double>> stuScores, String stuNum, Strategy strategy);
+    List rank(List<Map<String,Double>> stuScores,Strategy strategy);
+    List majorTrans(List<Map<String,Double>> stuScores,Strategy strategy);
 }

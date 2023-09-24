@@ -1,5 +1,7 @@
 package org;
 
+import com.alibaba.excel.EasyExcel;
+import org.Entity.StuScore;
 import org.Statistic.stats;
 import org.Strategy.UserDefinedStrategy;
 
@@ -50,17 +52,23 @@ public class Main {
                 }
         );
         //获取学生学号
-        System.out.println("输入你想查询的学号");
-        String stuNum = singletonScanner.next();
-        stats stats = new stats();
-        Map<String, List<Double>> comprehensiveSuperior = stats.comprehensiveSuperior(data, stuNum,
-                new UserDefinedStrategy());
+//        System.out.println("输入你想查询的学号");
+//        String stuNum = singletonScanner.next();
         //大一上：5+3+1+2+1+4+2
         //大一下：5+4+4+3+1+3+3+2.5+2+2+2
         //大一合计：49.5
         //大二上：1+3+3+4.5+2+4.5+1+2
         //大二下：3+1+4.5+2+2.5+2+4.5+2.5+3+3+2
         //大二合计：51
-        System.out.println(1);
+        stats stats = new stats();
+//        Map<String, List<Double>> superior = stats.comprehensiveSuperior(data, stuNum,
+//                new UserDefinedStrategy());
+        UserDefinedStrategy strategy = new UserDefinedStrategy();
+        List<StuScore> rank = stats.rank(data, strategy);
+        List<StuScore> majorTrans = stats.majorTrans(data, strategy);
+        String target = dir+"\\target\\target.xls";
+        String majortrans = dir+"\\target\\majorTrans.xls";
+        EasyExcel.write(target, StuScore.class).sheet("target").doWrite(rank);
+        EasyExcel.write(majortrans, StuScore.class).sheet("majorTrans").doWrite(majorTrans);
     }
 }
